@@ -1,0 +1,8 @@
+---
+version: '3'
+services:
+react-capstone:
+image: "react-capstone"
+ports:
+- "81:80"
+---
