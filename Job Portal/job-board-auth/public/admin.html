@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Job Board</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #fafafa;
+            font-family: 'Arial', sans-serif;
+        }
+        .admin-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .admin-container h2 {
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .form-control {
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .btn-primary {
+            width: 100%;
+            background-color: #007BFF;
+            border: none;
+            padding: 10px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-container">
+    <h2>Admin Panel</h2>
+    <form id="job-form">
+        <input type="text" id="title" placeholder="Job Title" required>
+        <input type="text" id="description" placeholder="Job Description" required>
+        <input type="text" id="company" placeholder="Company" required>
+        <input type="text" id="location" placeholder="Location" required>
+        <input type="text" id="salary" placeholder="Salary" required>
+        <button id="create-job-btn" type="submit">Create Job</button>
+    </form>
+    <div id="jobs-container"></div>
+</div>
+
+<script>
+    const jobForm = document.getElementById('job-form');
+    const jobsContainer = document.getElementById('jobs-container');
+
+    // Fetch all jobs
+    fetch('/jobs')
+        .then(response => response.json())
+        .then(jobs => {
+            jobs.forEach(job => {
+                const jobHTML = `
+                    <div>
+                        <h3>${job.title}</h3>
+                        <p>${job.description}</p>
+                        <p>Company: ${job.company}</p>
+                        <p>Location: ${job.location}</p>
+                        <p>Salary: ${job.salary}</p>
+                        <button class="update-job-btn" data-id="${job._id}">Update</button>
+                        <button class="delete-job-btn" data-id="${job._id}">Delete</button>
+                    </div>
+                `;
+                jobsContainer.innerHTML += jobHTML;
+            });
+        });
+
+    // Create a new job
+    jobForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const company = document.getElementById('company').value;
+        const location = document.getElementById('location').value;
+        const salary = document.getElementById('salary').value;
+
+        fetch('/jobs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, description, company, location, salary })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                location.reload(); // Refresh the page to see the new job
+            })
+            .catch(error => console.error('Error creating job:', error));
+    });
+
+    // Update a job
+    jobsContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('update-job-btn')) {
+            const jobId = e.target.dataset.id;
+            const title = prompt('Enter new title:');
+            const description = prompt('Enter new description:');
+            const company = prompt('Enter new company:');
+            const location = prompt('Enter new location:');
+            const salary = prompt('Enter new salary:');
+
+            fetch(`/jobs/${jobId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, description, company, location, salary })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    location.reload(); // Refresh the page to see the updated job
+                })
+                .catch(error => console.error('Error updating job:', error));
+        }
+    });
+
+    // Delete a job
+    jobsContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-job-btn')) {
+            const jobId = e.target.dataset.id;
+
+            fetch(`/jobs/${jobId}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    location.reload(); // Refresh the page to see the updated list
+                })
+                .catch(error => console.error('Error deleting job:', error));
+        }
+    });
+</script>
+</body>
+</html>

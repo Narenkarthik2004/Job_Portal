@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Job Board</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .dashboard-container {
+            max-width: 800px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .dashboard-container h2 {
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #343a40;
+            text-align: center;
+        }
+        .dashboard-content {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #495057;
+        }
+        .logout-btn {
+            float: right;
+            margin-top: 10px;
+            background-color: #007BFF;
+            border: none;
+            padding: 10px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .logout-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Welcome to Job Board Dashboard</h2>
+        <p class="dashboard-content">You are now logged in and can access the dashboard.</p>
+        <button class="logout-btn">Logout</button>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.logout-btn').click(function() {
+                $.ajax({
+                    type: 'GET',
+                    url: '/logout',
+                    success: function() {
+                        window.location.href = 'login.html';
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error logging out: ' + error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
